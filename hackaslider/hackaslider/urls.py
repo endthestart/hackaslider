@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^configure/step-5/$', 'hackaslider.views.payload', name='payload'),
     url(r'^device/(?P<pk>[0-9]+)/$', 'hackaslider.views.device_config', name='device_config'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^demo/', 'hackaslider.views.demo', name='demo'),
 ]
 
 
