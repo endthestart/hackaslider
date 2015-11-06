@@ -63,6 +63,22 @@ def payload(request, template_name='payload.html'):
     return render_to_response(template_name, context, RequestContext(request))
 
 
+def network_config(request, pk=None, template_name='network_config.html'):
+    device_id = request.session.get('device_id', None)
+    network_instance = get_object_or_404(NetworkLink, pk=pk)
+    network_link_form = NetworkLinkForm(instance=network_instance)
+    if request.method == 'POST':
+        network_link_form = NetworkLinkForm(request.POST, instance=network_instance)
+        if network_link_form.is_valid():
+            network_instance = network_link_form.save()
+        return HttpResponseRedirect(reverse('device_config', args=(device_id,)))
+
+    context = {
+        'network_link_form': network_link_form,
+    }
+    return render_to_response(template_name, context, RequestContext(request))
+
+
 def device_config(request, pk=None, template_name='device_config.html'):
     device_instance = get_object_or_404(Device, pk=pk)
     device_form = DeviceForm(instance=device_instance)

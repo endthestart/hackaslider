@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^configure/step-2/$', 'hackaslider.views.network_link', name='network_link'),
     url(r'^configure/step-3/$', 'hackaslider.views.payload', name='payload'),
     url(r'^device/(?P<pk>[0-9]+)/$', 'hackaslider.views.device_config', name='device_config'),
+    url(r'^network/(?P<pk>[0-9]+)/$', 'hackaslider.views.network_config', name='network_config'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^demo/', 'hackaslider.views.demo', name='demo'),
 ]
