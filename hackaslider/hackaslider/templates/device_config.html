@@ -4,6 +4,11 @@
 {% block title %}Device Config{% endblock title %}
 
 {% block content %}
+<div>
+    <p>
+        {{ monthly_cost }}
+    </p>
+</div>
 <form action="" method="post">{% csrf_token %}
     {{ device_form.as_p }}
     <input type="submit" name="submit" />

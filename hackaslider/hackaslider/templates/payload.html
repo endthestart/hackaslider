@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static from staticfiles %}
 
-{% block title %}Configure Protocol{% endblock title %}
+{% block title %}Configure Payload{% endblock title %}
 
 {% block content %}
 <form action="" method="post">{% csrf_token %}
-    {{ protocol_form.as_p }}
-    <input type="submit" name="continue" />
+
+    <input type="submit" name="next" />
 </form>
 {% endblock %}

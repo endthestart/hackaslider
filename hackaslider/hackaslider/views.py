@@ -80,9 +80,19 @@ def protocol(request, template_name='protocol.html'):
 
 
 def payload(request, template_name='payload.html'):
-    import pdb; pdb.set_trace()
+    if request.method == 'POST':
+        device_id = request.session.get('device_id', None)
+        network_structure_id = request.session.get('network_structure_id', None)
+        network_link_id = request.session.get('network_link_id', None)
+        protocol_id = request.session.get('protocol_id', None)
+        device = get_object_or_404(Device, id=device_id)
+        device.network_structure = get_object_or_404(NetworkStructure, id=network_structure_id)
+        device.network_link = get_object_or_404(NetworkLink, id=network_link_id)
+        device.protocol = get_object_or_404(Protocol, id=protocol_id)
+        device.save()
+        return HttpResponseRedirect(reverse('device_config', args=(device_id,)))
     context = {
-        'protocol_form': {},
+        'payload_form': {},
     }
     return render_to_response(template_name, context, RequestContext(request))
 
@@ -98,5 +108,19 @@ def device_config(request, pk=None, template_name='device_config.html'):
     context = {
         'device_form': device_form,
         'device_instance': device_instance,
+        'monthly_cost': calculate_cost(device_instance),
     }
     return render_to_response(template_name, context, RequestContext(request))
+
+def calculate_cost(device):
+    payload_size = 100000
+    transmission_size = device.network_structure.transmission_size(payload_size, device.number, device.protocol.overhead, device.protocol.encryption_overhead)
+    print transmission_size
+    print device.frequency
+    bytes_per_month = transmission_size * device.frequency
+    real_bytes_per_month = device.frequency_factor(bytes_per_month)
+
+    return (real_bytes_per_month / 100000) * device.network_link.cost_per_mb
+
+
+
