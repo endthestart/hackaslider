@@ -87,5 +87,7 @@ def calculate_cost(device):
 
     return (real_bytes_per_month / 100000) * device.network_link.cost_per_mb
 
-
+def demo(request, template_name='demo.html'):
+    context = {}
+    return render_to_response(template_name, context, RequestContext(request))
 
