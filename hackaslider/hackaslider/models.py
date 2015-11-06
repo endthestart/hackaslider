@@ -70,143 +70,6 @@ class NetworkLink(models.Model):
         super(NetworkLink, self).save(**kwargs)
 
 
-class Protocol(models.Model):
-    """
-    A class for protocols
-    - COAP
-    - HTTP
-    - RPC
-    - WEB Sockets
-    """
-    COAP = 'COAP'
-    HTTP = 'HTTP'
-    RPC = 'RPC'
-    SOCKETS = 'SOCKETS'
-    PROTOCOL_TYPE_CHOICES = (
-        (COAP, 'COAP'),
-        (HTTP, 'HTTP'),
-        (RPC, 'RPC'),
-        (SOCKETS, 'Web Sockets'),
-    )
-    type = models.CharField(
-        _(u"type"),
-        null=True,
-        blank=True,
-        max_length=255,
-        choices=PROTOCOL_TYPE_CHOICES,
-        default=HTTP,
-        help_text=_(u"The type of the protocol."),
-    )
-    slug = models.SlugField(
-        _(u"slug"),
-        blank=True,
-        help_text=_(u"Used for URLs, auto-generated from name if blank."),
-        max_length=255,
-    )
-    description = models.TextField(
-        _(u"description"),
-        null=True,
-        blank=True,
-        help_text=_(u"This should be a more lengthy description of the protocol."),
-    )
-    encryption = models.BooleanField(
-        _(u"active"),
-        default=False,
-        blank=True,
-        help_text=_(u"Whether or not encryption will be used when transmitting data."),
-    )
-
-    @property
-    def overhead(self):
-        protocol_overhead = 0
-        if self.type == self.COAP:
-            protocol_overhead = 100000
-        elif self.type == self.HTTP:
-            protocol_overhead = 100000
-        elif self.type == self.RPC:
-            protocol_overhead = 200000
-        elif self.type == self.SOCKETS:
-            protocol_overhead = 150000
-        return protocol_overhead
-
-    @property
-    def encryption_overhead(self):
-        if self.encryption:
-            return 100000
-        else:
-            return 0
-
-    def __unicode__(self):
-        return u"{}".format(self.type)
-
-    class Meta:
-        ordering = ['type']
-        verbose_name = _(u"protocol")
-        verbose_name_plural = _(u"protocols")
-
-    def save(self, **kwargs):
-        if self.type and not self.slug:
-            self.slug = slugify(self.type)
-
-        super(Protocol, self).save(**kwargs)
-
-
-class NetworkStructure(models.Model):
-    SINGLE = 'SINGLE'
-    MESH = 'MESH'
-    GATEWAY = 'GATEWAY'
-    PROTOCOL_TYPE_CHOICES = (
-        (SINGLE, 'Single Device'),
-        (MESH, 'Mesh'),
-        (GATEWAY, 'Gateway'),
-    )
-    type = models.CharField(
-        _(u"type"),
-        null=True,
-        blank=True,
-        max_length=255,
-        choices=PROTOCOL_TYPE_CHOICES,
-        default=SINGLE,
-        help_text=_(u"The name of the network structure."),
-    )
-    slug = models.SlugField(
-        _(u"slug"),
-        blank=True,
-        help_text=_(u"Used for URLs, auto-generated from name if blank."),
-        max_length=255,
-    )
-    description = models.TextField(
-        _(u"description"),
-        null=True,
-        blank=True,
-        help_text=_(u"This should be a more lengthy description of the network structure."),
-    )
-
-    def transmission_size(self, payload_size, number_of_devices, protocol_overhead, encryption_overhead):
-        ts = 0
-        if self.type == self.SINGLE:
-            ts = (payload_size + protocol_overhead + encryption_overhead) * number_of_devices
-        elif self.type == self.MESH:
-            ts = (payload_size * number_of_devices) + protocol_overhead + encryption_overhead
-        elif self.type == self.GATEWAY:
-            ts = (payload_size * number_of_devices) + protocol_overhead + encryption_overhead
-        return int(ts)
-
-    def __unicode__(self):
-        return u"{}".format(self.type)
-
-    class Meta:
-        ordering = ['type']
-        verbose_name = _(u"network structure")
-        verbose_name_plural = _(u"network structures")
-
-    def save(self, **kwargs):
-        if self.type and not self.slug:
-            self.slug = slugify(self.type)
-
-        super(NetworkStructure, self).save(**kwargs)
-
-
 class Device(models.Model):
     """
     A class for the device configuration
@@ -220,6 +83,25 @@ class Device(models.Model):
         (ALERT, 'Alert'),
         (CONTROL, 'Control'),
         (MONITOR, 'Monitor'),
+    )
+
+    SINGLE = 'SINGLE'
+    MESH = 'MESH'
+    GATEWAY = 'GATEWAY'
+    NETWORK_STRUCTURE_CHOICES = (
+        (SINGLE, 'Single Device'),
+        (MESH, 'Mesh'),
+        (GATEWAY, 'Gateway'),
+    )
+    COAP = 'COAP'
+    HTTP = 'HTTP'
+    RPC = 'RPC'
+    SOCKETS = 'SOCKETS'
+    PROTOCOL_TYPE_CHOICES = (
+        (COAP, 'COAP'),
+        (HTTP, 'HTTP'),
+        (RPC, 'RPC'),
+        (SOCKETS, 'Web Sockets'),
     )
     name = models.CharField(
         _(u"name"),
@@ -245,15 +127,23 @@ class Device(models.Model):
         blank=True,
         null=True,
     )
-    network_structure = models.ForeignKey(
-        NetworkStructure,
-        blank=True,
+    network_structure = models.CharField(
+        _(u"type"),
         null=True,
+        blank=True,
+        max_length=255,
+        choices=NETWORK_STRUCTURE_CHOICES,
+        default=SINGLE,
+        help_text=_(u"The name of the network structure."),
     )
-    protocol = models.ForeignKey(
-        Protocol,
-        blank=True,
+    protocol = models.CharField(
+        _(u"type"),
         null=True,
+        blank=True,
+        max_length=255,
+        choices=PROTOCOL_TYPE_CHOICES,
+        default=HTTP,
+        help_text=_(u"The type of the protocol."),
     )
     frequency = models.PositiveIntegerField(
         _(u"frequency"),
@@ -274,14 +164,50 @@ class Device(models.Model):
         default=1,
         help_text=_(u"The number of devices in the network."),
     )
+    encryption = models.BooleanField(
+        _(u"active"),
+        default=False,
+        blank=True,
+        help_text=_(u"Whether or not encryption will be used when transmitting data."),
+    )
+
+    def transmission_size(self, payload_size):
+        ts = 0
+        if self.network_structure == self.SINGLE:
+            ts = (payload_size + self.protocol_overhead + self.encryption_overhead) * self.number
+        elif self.network_structure == self.MESH:
+            ts = (payload_size * self.number) + self.protocol_overhead + self.encryption_overhead
+        elif self.network_structure == self.GATEWAY:
+            ts = (payload_size * self.number) + self.protocol_overhead + self.encryption_overhead
+        return int(ts)
 
     def frequency_factor(self, bytes_per_month):
         if self.frequency_category == self.CONTROL:
-            return bytes_per_month * 1
+            return int(bytes_per_month * 1)
         elif self.frequency_category == self.MONITOR:
-            return bytes_per_month * 0.5
+            return int(bytes_per_month * 0.5)
         elif self.frequency_category == self.ALERT:
-            return bytes_per_month * 0.1
+            return int(bytes_per_month * 0.1)
+
+    @property
+    def protocol_overhead(self):
+        protocol_overhead = 0
+        if self.protocol == self.COAP:
+            protocol_overhead = 20
+        elif self.protocol == self.HTTP:
+            protocol_overhead = 1200
+        elif self.protocol == self.RPC:
+            protocol_overhead = 1350
+        elif self.protocol == self.SOCKETS:
+            protocol_overhead = 1100
+        return protocol_overhead
+
+    @property
+    def encryption_overhead(self):
+        if self.encryption:
+            return 5000
+        else:
+            return 0
 
     def __unicode__(self):
         return u"{}".format(self.name)

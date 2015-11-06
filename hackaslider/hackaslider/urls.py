@@ -20,10 +20,8 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^$', 'hackaslider.views.home', name='home'),
     url(r'^configure/step-1/$', 'hackaslider.views.device_add', name='device_add'),
-    url(r'^configure/step-2/$', 'hackaslider.views.network_structure', name='network_structure'),
-    url(r'^configure/step-3/$', 'hackaslider.views.network_link', name='network_link'),
-    url(r'^configure/step-4/$', 'hackaslider.views.protocol', name='protocol'),
-    url(r'^configure/step-5/$', 'hackaslider.views.payload', name='payload'),
+    url(r'^configure/step-2/$', 'hackaslider.views.network_link', name='network_link'),
+    url(r'^configure/step-3/$', 'hackaslider.views.payload', name='payload'),
     url(r'^device/(?P<pk>[0-9]+)/$', 'hackaslider.views.device_config', name='device_config'),
     url(r'^admin/', include(admin.site.urls)),
 ]
