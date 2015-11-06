@@ -10,12 +10,29 @@ class NetworkLink(models.Model):
     - Cellular
     - Satellite
     """
+    ETHERNET = 'ETHERNET'
+    CELLULAR = 'CELLULAR'
+    SATELLITE = 'SATELLITE'
+    NETWORK_TYPE_CHOICES = (
+        (ETHERNET, 'Ethernet or WiFi'),
+        (CELLULAR, 'Cellular'),
+        (SATELLITE, 'Satellite'),
+    )
     name = models.CharField(
         _(u"name"),
         null=True,
         blank=True,
         max_length=255,
         help_text=_(u"The name of the network link."),
+    )
+    network_type = models.CharField(
+        _(u"network type"),
+        null=True,
+        blank=True,
+        max_length=255,
+        choices=NETWORK_TYPE_CHOICES,
+        default=ETHERNET,
+        help_text=_(u"The type of the network link."),
     )
     slug = models.SlugField(
         _(u"slug"),
@@ -28,6 +45,14 @@ class NetworkLink(models.Model):
         null=True,
         blank=True,
         help_text=_(u"This should be a more lengthy description of the network link."),
+    )
+    cost_per_mb = models.DecimalField(
+        _(u"cost per mb"),
+        max_digits=8,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text=_(u"The cost per MB for data transfer of the network."),
     )
 
     def __unicode__(self):
@@ -53,12 +78,24 @@ class Protocol(models.Model):
     - RPC
     - WEB Sockets
     """
-    name = models.CharField(
-        _(u"name"),
+    COAP = 'COAP'
+    HTTP = 'HTTP'
+    RPC = 'RPC'
+    SOCKETS = 'SOCKETS'
+    PROTOCOL_TYPE_CHOICES = (
+        (COAP, 'COAP'),
+        (HTTP, 'HTTP'),
+        (RPC, 'RPC'),
+        (SOCKETS, 'Web Sockets'),
+    )
+    type = models.CharField(
+        _(u"type"),
         null=True,
         blank=True,
         max_length=255,
-        help_text=_(u"The name of the protocol."),
+        choices=PROTOCOL_TYPE_CHOICES,
+        default=HTTP,
+        help_text=_(u"The type of the protocol."),
     )
     slug = models.SlugField(
         _(u"slug"),
@@ -72,18 +109,24 @@ class Protocol(models.Model):
         blank=True,
         help_text=_(u"This should be a more lengthy description of the protocol."),
     )
+    encryption = models.BooleanField(
+        _(u"active"),
+        default=False,
+        blank=True,
+        help_text=_(u"Whether or not encryption will be used when transmitting data."),
+    )
 
     def __unicode__(self):
-        return u"{}".format(self.name)
+        return u"{}".format(self.type)
 
     class Meta:
-        ordering = ['name']
+        ordering = ['type']
         verbose_name = _(u"protocol")
         verbose_name_plural = _(u"protocols")
 
     def save(self, **kwargs):
-        if self.name and not self.slug:
-            self.slug = slugify(self.name)
+        if self.type and not self.slug:
+            self.slug = slugify(self.type)
 
         super(Protocol, self).save(**kwargs)
 
@@ -136,6 +179,14 @@ class Device(models.Model):
 
     Ability to create a device and apply the network type and attributes.
     """
+    ALERT = 'ALERT'
+    CONTROL = 'CONTROL'
+    MONITOR = 'MONITOR'
+    FREQUENCY_CATEGORY_CHOICES = (
+        (ALERT, 'Alert'),
+        (CONTROL, 'Control'),
+        (MONITOR, 'Monitor'),
+    )
     name = models.CharField(
         _(u"name"),
         null=True,
@@ -172,8 +223,17 @@ class Device(models.Model):
     )
     frequency = models.PositiveIntegerField(
         _(u"frequency"),
-        default=0,
+        default=1,
         help_text=_(u"The number of seconds between data transmissions."),
+    )
+    frequency_category = models.CharField(
+        _(u"frequency category"),
+        null=True,
+        blank=True,
+        max_length=30,
+        choices=FREQUENCY_CATEGORY_CHOICES,
+        default=MONITOR,
+        help_text=_(u"The category of the frequency.")
     )
     number = models.PositiveIntegerField(
         _(u"number"),

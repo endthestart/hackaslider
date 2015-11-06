@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static from staticfiles %}
+
+{% block title %}Configure Network Structure{% endblock title %}
+
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+    {{ network_structure_form.as_p }}
+    <input type="submit" name="submit" />
+</form>
+{% endblock %}
