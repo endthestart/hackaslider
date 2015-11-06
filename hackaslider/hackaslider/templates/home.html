@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% load static from staticfiles %}
+
+{% block title %}Home{% endblock title %}
+
+{% block content %}
+<a href="{% url 'device_add' %}">Build a Device</a>
+{% endblock %}

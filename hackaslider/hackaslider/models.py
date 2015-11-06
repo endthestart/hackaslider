@@ -1,4 +1,5 @@
 from django.db import models
+from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -13,13 +14,14 @@ class NetworkLink(models.Model):
         _(u"name"),
         null=True,
         blank=True,
+        max_length=255,
         help_text=_(u"The name of the network link."),
     )
     slug = models.SlugField(
         _(u"slug"),
         blank=True,
-        help_text=_(u"Used for URLs, auto-generated from name if blank."),
         max_length=255,
+        help_text=_(u"Used for URLs, auto-generated from name if blank."),
     )
     description = models.TextField(
         _(u"description"),
@@ -36,6 +38,12 @@ class NetworkLink(models.Model):
         verbose_name = _(u"network link")
         verbose_name_plural = _(u"network links")
 
+    def save(self, **kwargs):
+        if self.name and not self.slug:
+            self.slug = slugify(self.name)
+
+        super(NetworkLink, self).save(**kwargs)
+
 
 class Protocol(models.Model):
     """
@@ -49,6 +57,7 @@ class Protocol(models.Model):
         _(u"name"),
         null=True,
         blank=True,
+        max_length=255,
         help_text=_(u"The name of the protocol."),
     )
     slug = models.SlugField(
@@ -72,6 +81,12 @@ class Protocol(models.Model):
         verbose_name = _(u"protocol")
         verbose_name_plural = _(u"protocols")
 
+    def save(self, **kwargs):
+        if self.name and not self.slug:
+            self.slug = slugify(self.name)
+
+        super(Protocol, self).save(**kwargs)
+
 
 class NetworkStructure(models.Model):
     """
@@ -84,6 +99,7 @@ class NetworkStructure(models.Model):
         _(u"name"),
         null=True,
         blank=True,
+        max_length=255,
         help_text=_(u"The name of the network structure."),
     )
     slug = models.SlugField(
@@ -107,6 +123,12 @@ class NetworkStructure(models.Model):
         verbose_name = _(u"network structure")
         verbose_name_plural = _(u"network structures")
 
+    def save(self, **kwargs):
+        if self.name and not self.slug:
+            self.slug = slugify(self.name)
+
+        super(NetworkStructure, self).save(**kwargs)
+
 
 class Device(models.Model):
     """
@@ -118,6 +140,7 @@ class Device(models.Model):
         _(u"name"),
         null=True,
         blank=True,
+        max_length=255,
         help_text=_(u"The name of the device."),
     )
     slug = models.SlugField(
@@ -165,3 +188,9 @@ class Device(models.Model):
         ordering = ['name']
         verbose_name = _(u"device")
         verbose_name_plural = _(u"devices")
+
+    def save(self, **kwargs):
+        if self.name and not self.slug:
+            self.slug = slugify(self.name)
+
+        super(Device, self).save(**kwargs)

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static from staticfiles %}
+
+{% block title %}Device Config{% endblock title %}
+
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+    {{ device_form.as_p }}
+    <input type="submit" name="submit" />
+</form>
+{% endblock %}
