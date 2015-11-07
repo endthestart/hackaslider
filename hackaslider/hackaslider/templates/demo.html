@@ -11,15 +11,24 @@ hi
 <h1>Step 1</h1>
 <div id="deviceDiagram"></div>
 <p id="deviceDescription">Select the option that best decribes your device profile.</p>
-<div id="myDropdown"></div>
+<div id="deviceDropdown"></div>
 
 {% endblock %}
+
+{% block col-2 %}
+<h1>Step 2</h1>
+<div id="deviceData"></div>
+<p id="dataDescription">Select the option that best decribes your device profile.</p>
+<div id="dataDropdown"></div>
+
+{% endblock %}
+
 
 {% block extrajs %}
     <script src="https://cdn.jsdelivr.net/ddslick/2.0/jquery.ddslick.min.js"></script>
 <script type="text/javascript">
 //Dropdown plugin data
-var ddData = [
+var ddDataDevice = [
     {
         text: "Smart Device",
         value: 1,
@@ -42,24 +51,66 @@ var ddData = [
         imageSrc: "http://placehold.it/200/666666/33cc33"
     }
 ];
-    
-$('#myDropdown').ddslick({
-    data:ddData,
+$('#deviceDropdown').ddslick({
+    data:ddDataDevice,
     width:220,
     height:300,
     selectText: "Select your device type",
     imagePosition:"left",
     onSelected: function(selectedData){
         // console.dir(selectedData);
-        // alert(selectedData.selectedData.imageSrc);
+        // alert(selectedData.selectedData.blah);
         $('#deviceDiagram').html("<img src='"+selectedData.selectedData.imageSrc+"'>");
         $('#deviceDescription').html(selectedData.selectedData.description);
 
     }   
 });
+
+    
+//data Dropdown plugin data
+var ddDataDeviceData = [
+    {
+        text: "Raw Data",
+        value: 1,
+        selected: false,
+        description: "Integer, float, binary, etc. No descriptive labels or metadata",
+        example: "36.666667"
+    },
+    {
+        text: "Key/Value Pairs",
+        value: 2,
+        selected: false,
+        description: "Key/Value pairs allow the inclusion of multiple data values, as identified by associated data keys.",
+        example: "temp=36.7&duration=20&alert=false"
+    },
+    {
+        text: "JSON Data",
+        value: 3,
+        selected: false,
+        description: "Structured, extensible data document, easily manipulated and re-used by other endpoints.",
+        example: "      {\"Temp\":36.7, \"LastTemp\":35.5, \"Alert\":false, \"more\":\"here\"}"
+
+    }
+];
+
+    
+$('#dataDropdown').ddslick({
+    data:ddDataDeviceData,
+    width:220,
+    height:300,
+    selectText: "Select your data payload",
+    onSelected: function(selectedData){
+        // console.dir(selectedData);
+        // alert(selectedData.selectedData.blah);
+        $('#dataDescription').html(selectedData.selectedData.description);
+        $('#deviceData').html(selectedData.selectedData.example);
+
+
+    }   
+}); 
+
 </script>
 <style>
-<!-- override ddslick max width -->
-.dd-selected-image {width:200px}
+#deviceData {font-family: monospace; border: 1px solid #000000;padding:15px; }
 </style>
 {% endblock %}
