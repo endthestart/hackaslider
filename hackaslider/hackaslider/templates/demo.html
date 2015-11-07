@@ -25,12 +25,32 @@ hi
 
 {% block col-3 %}
 <h1>Step 3</h1>
+
+<h4>Select the frequency of data reporting:</h4>
 <p>
-  <label for="amount">Frequency of data reports (in seconds):</label>
-  <input type="text" id="seconds" readonly style="border:0; color:#f6931f; font-weight:bold;">
+<input type="text" id="seconds" readonly style="border:0; color:#f6931f; font-weight:bold;">
 </p>
 <div id="dataSlider"></div>
-<p>Select the frequency of data reporting.</p>
+<div style="width: 10px;border:1px solid #000000;float:left">C</div>
+<div style="width: 50px;border:1px solid #000000;float:left">Monitor</div>
+<div style="width: 300px;border:1px solid #000000;float:left">Alert</div>
+
+<h4 style="clear:both">Select API protocol:</h4>
+  <fieldset>
+    <div id="apiradio">
+      <input type="radio" id="coapapi" name="API">
+      <label for="coapapi">CoAP</label>
+ 
+      <input type="radio" id="httpapi" name="API">
+      <label for="httpapi">HTTP</label>
+ 
+      <input type="radio" id="rpcapi" name="API">
+      <label for="rpcapi">RPC</label>
+    </div>
+  </fieldset>
+
+<h4>Enter your cost of data:</h4>
+<p><em>$</em> <input type="text" value="0"> /mb</p>
 
 {% endblock %}
 
@@ -120,6 +140,7 @@ $('#dataDropdown').ddslick({
 }); 
 
   $(function() {
+    $( "#apiradio" ).buttonset();
     $( "#dataSlider" ).slider({
       range: "max",
       min: 1,
@@ -156,6 +177,9 @@ $('#dataDropdown').ddslick({
     $( "#seconds" ).val( $( "#dataSlider" ).slider( "value" ) + " seconds" );
   });
     
+
+
+
 </script>
  
 <style>
