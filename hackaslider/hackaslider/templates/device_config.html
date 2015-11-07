@@ -1,16 +1,17 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load crispy_forms_tags %}
 
 {% block title %}Device Config{% endblock title %}
 
 {% block content %}
 <div>
     <p>
-        ${{ monthly_cost }}
+        <h3>Anticipated Monthly Cost: ${{ monthly_cost }}</h3>
     </p>
 </div>
 <form action="" method="post">{% csrf_token %}
-    {{ device_form.as_p }}
-    <input type="submit" name="submit" />
+    {{ device_form|crispy }}
+    <input type="submit" name="submit" value="Recalculate" />
 </form>
 {% endblock %}

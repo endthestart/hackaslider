@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load crispy_forms_tags %}
 
 {% block title %}Configure Network Link{% endblock title %}
 
 {% block content %}
 <form action="" method="post">{% csrf_token %}
-    {{ network_link_form.as_p }}
+    {{ network_link_form|crispy }}
     <input type="submit" name="continue" />
 </form>
 {% endblock %}

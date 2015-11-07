@@ -4,8 +4,58 @@
 {% block title %}Configure Payload{% endblock title %}
 
 {% block content %}
+<h2>Configure Your JSON Payload</h2>
+<pre>
+[
+  {
+    "_id": "563dfd551b5edf7ac455a136",
+    "index": 4,
+    "guid": "fa6c54df-3793-4827-a99f-92069c68067e",
+    "isActive": false,
+    "balance": "$2,781.76",
+    "picture": "http://placehold.it/32x32",
+    "age": 27,
+    "eyeColor": "brown",
+    "name": "Noreen Lawson",
+    "gender": "female",
+    "company": "RECRISYS",
+    "email": "noreenlawson@recrisys.com",
+    "phone": "+1 (879) 441-2229",
+    "address": "374 Olive Street, Iberia, Montana, 5778",
+    "about": "Voluptate minim magna ad duis enim velit laborum excepteur consequat magna veniam deserunt labore. Quis laborum cupidatat deserunt sint minim labore. Ut labore reprehenderit sit adipisicing aliquip commodo consequat non sint est.\r\n",
+    "registered": "2015-09-13T12:58:06 +05:00",
+    "latitude": -2.114262,
+    "longitude": -31.14181,
+    "tags": [
+      "do",
+      "consequat",
+      "labore",
+      "eiusmod",
+      "eu",
+      "exercitation",
+      "tempor"
+    ],
+    "friends": [
+      {
+        "id": 0,
+        "name": "Felecia Morton"
+      },
+      {
+        "id": 1,
+        "name": "Elsie Nash"
+      },
+      {
+        "id": 2,
+        "name": "Eaton Rush"
+      }
+    ],
+    "greeting": "Hello, Noreen Lawson! You have 4 unread messages.",
+    "favoriteFruit": "apple"
+  }
+]
+</pre>
 <form action="" method="post">{% csrf_token %}
 
-    <input type="submit" name="next" />
+    <input type="submit" name="continue" value="Continue" />
 </form>
 {% endblock %}
