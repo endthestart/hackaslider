@@ -9,7 +9,7 @@ hi
 
 {% block col-1 %}
 <h1>Step 1</h1>
-<div id="deviceDiagram"></div>
+<div id="deviceDiagram"><img src="http://placehold.it/300x50/666666/ffffff"></div>
 <p id="deviceDescription">Select the option that best decribes your device profile.</p>
 <div id="deviceDropdown"></div>
 
@@ -23,6 +23,16 @@ hi
 
 {% endblock %}
 
+{% block col-3 %}
+<h1>Step 3</h1>
+<p>
+  <label for="amount">Frequency of data reports (in seconds):</label>
+  <input type="text" id="seconds" readonly style="border:0; color:#f6931f; font-weight:bold;">
+</p>
+<div id="dataSlider"></div>
+<p>Select the frequency of data reporting.</p>
+
+{% endblock %}
 
 {% block extrajs %}
     <script src="https://cdn.jsdelivr.net/ddslick/2.0/jquery.ddslick.min.js"></script>
@@ -34,26 +44,26 @@ var ddDataDevice = [
         value: 1,
         selected: false,
         description: "Single device with internet communication capabilities.",
-        imageSrc: "http://placehold.it/200/666666/ffcc33"
+        imageSrc: "http://placehold.it/300x200/666666/ffcc33"
     },
     {
         text: "Mesh Network",
         value: 2,
         selected: false,
         description: "Peer devices with a single master promoted for communication.",
-        imageSrc: "http://placehold.it/200/666666/33cccc"
+        imageSrc: "http://placehold.it/300x200/666666/33cccc"
     },
     {
         text: "Gateway Network",
         value: 3,
         selected: false,
         description: "Edge devices aggregated by a gateway device with communication and logic.",
-        imageSrc: "http://placehold.it/200/666666/33cc33"
+        imageSrc: "http://placehold.it/300x200/666666/33cc33"
     }
 ];
 $('#deviceDropdown').ddslick({
     data:ddDataDevice,
-    width:220,
+    width:300,
     height:300,
     selectText: "Select your device type",
     imagePosition:"left",
@@ -96,7 +106,7 @@ var ddDataDeviceData = [
     
 $('#dataDropdown').ddslick({
     data:ddDataDeviceData,
-    width:220,
+    width:300,
     height:300,
     selectText: "Select your data payload",
     onSelected: function(selectedData){
@@ -109,8 +119,46 @@ $('#dataDropdown').ddslick({
     }   
 }); 
 
+  $(function() {
+    $( "#dataSlider" ).slider({
+      range: "max",
+      min: 1,
+      max: 2678400,
+      value: 60,
+      step: 1,
+      slide: function( event, ui ) {
+        $( "#seconds" ).val( ui.value );
+          // console.dir(Math.floor(2678400/ui.value).toString().length);
+        switch(Math.floor(26784000/ui.value).toString().length) {
+            case 1:
+            case 2:
+                // days
+                retval = Math.floor(ui.value/86400);
+                retunit = " days";
+                retstep = 86400;
+            break;
+            case 3:
+                // hours
+                retval = Math.floor(ui.value/3600);
+                retunit = " hours";
+                retstep = 3600;
+            break;
+            default:
+                // seconds
+                retval = ui.value;
+                retunit = (retval == 1 ? " second" : " seconds");
+                retstep = 1;
+        }
+        // ui.value = retval*retstep;
+        $( "#seconds" ).val( retval + retunit );
+      }
+    });
+    $( "#seconds" ).val( $( "#dataSlider" ).slider( "value" ) + " seconds" );
+  });
+    
 </script>
+ 
 <style>
-#deviceData {font-family: monospace; border: 1px solid #000000;padding:15px; }
+#deviceData {font-family: monospace; border: 1px solid #000000;padding:25px; max-width:310px }
 </style>
 {% endblock %}
