@@ -5,5 +5,61 @@
 
 {% block content %}
 hi
+{% endblock %}
 
+{% block col-1 %}
+<h1>Step 1</h1>
+<div id="deviceDiagram"></div>
+<p id="deviceDescription">Select the option that best decribes your device profile.</p>
+<div id="myDropdown"></div>
+
+{% endblock %}
+
+{% block extrajs %}
+    <script src="https://cdn.jsdelivr.net/ddslick/2.0/jquery.ddslick.min.js"></script>
+<script type="text/javascript">
+//Dropdown plugin data
+var ddData = [
+    {
+        text: "Smart Device",
+        value: 1,
+        selected: false,
+        description: "Single device with internet communication capabilities.",
+        imageSrc: "http://placehold.it/200/666666/ffcc33"
+    },
+    {
+        text: "Mesh Network",
+        value: 2,
+        selected: false,
+        description: "Peer devices with a single master promoted for communication.",
+        imageSrc: "http://placehold.it/200/666666/33cccc"
+    },
+    {
+        text: "Gateway Network",
+        value: 3,
+        selected: false,
+        description: "Edge devices aggregated by a gateway device with communication and logic.",
+        imageSrc: "http://placehold.it/200/666666/33cc33"
+    }
+];
+    
+$('#myDropdown').ddslick({
+    data:ddData,
+    width:220,
+    height:300,
+    selectText: "Select your device type",
+    imagePosition:"left",
+    onSelected: function(selectedData){
+        // console.dir(selectedData);
+        // alert(selectedData.selectedData.imageSrc);
+        $('#deviceDiagram').html("<img src='"+selectedData.selectedData.imageSrc+"'>");
+        $('#deviceDescription').html(selectedData.selectedData.description);
+
+    }   
+});
+</script>
+<style>
+<!-- override ddslick max width -->
+.dd-selected-image {width:200px}
+</style>
 {% endblock %}
