@@ -4,4 +4,4 @@ COPY ./ /opt/andermic/
 
 RUN cd /opt/andermic && pip install -r requirements.txt
 
-CMD ["python", "/opt/andermic/hackaslider/hackaslider/manage.py", "runserver"]
+CMD ["python", "/opt/andermic/hackaslider/manage.py", "runserver"]
